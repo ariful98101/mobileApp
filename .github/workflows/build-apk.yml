@@ -22,8 +22,14 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      # GitHub's ubuntu-latest runner already ships a full Android SDK
+      # (cmdline-tools, platforms, build-tools) -- android-actions/setup-android@v3
+      # is not needed and currently fails trying to install the removed
+      # legacy "tools" package. Just accept the SDK licenses so Gradle's
+      # own auto-download of any missing platform/build-tools (if any)
+      # doesn't get blocked on an interactive prompt.
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses > /dev/null || true
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
@@ -52,8 +58,8 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses > /dev/null || true
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
